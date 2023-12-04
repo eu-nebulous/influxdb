@@ -35,18 +35,40 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 8086
               protocol: TCP
+          env:
+            - name: INFLUXDB_HTTP_AUTH_ENABLED
+              value: "{{ .Values.config.httpAuthEnabled }}"
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /health
+              port: 8086
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /health
+              port: 8086
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: influxdb-storage
+              mountPath: /var/lib/influxdb
+      volumes:
+        - name: influxdb-config
+          configMap:
+            name: influxdb-config
+        - name: influxdb-storage
+          persistentVolumeClaim:
+            claimName: influxdb-storage
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

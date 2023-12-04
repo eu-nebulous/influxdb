@@ -8,15 +8,15 @@
       - nebulous-influxdb-container-images
     description: Build the container images.
     files: &image_files
-      - ^java-spring-boot-demo/
+      - ^influxdb/
     vars: &image_vars
       promote_container_image_job: nebulous-influxdb-upload-container-images
       container_images:
-        - context: java-spring-boot-demo
+        - context: influxdb
           registry: quay.io
-          repository: quay.io/nebulous/influxdb-java-spring-boot-demo
+          repository: quay.io/nebulous/influxdb
           namespace: nebulous
-          repo_shortname: influxdb-java-spring-boot-demo
+          repo_shortname: influxdb
           repo_description: ""
 
 - job:
@@ -44,7 +44,7 @@
     description: Run Hadolint on Dockerfile(s).
     vars:
       dockerfiles:
-        - java-spring-boot-demo/Dockerfile
+        - influxdb/Dockerfile
 
 - job:
     name: nebulous-influxdb-helm-lint
