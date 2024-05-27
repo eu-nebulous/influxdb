@@ -8,6 +8,7 @@
       - nebulous-influxdb-container-images
     description: Build the container images.
     files: &image_files
+      - ^zuul\.d/jobs\.yaml$
       - ^influxdb/
     vars: &image_vars
       promote_container_image_job: nebulous-influxdb-upload-container-images
